@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator David</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .calculator {
+            background: white;
+            width: 100%;
+            max-width: 380px;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 25px;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            color: #555;
+            font-size: 14px;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        input[type="number"]:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .btn-calculate {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-calculate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-calculate:active {
+            transform: translateY(0);
+        }
+
+        .btn-clear {
+            background: #f0f0f0;
+            color: #555;
+        }
+
+        .btn-clear:hover {
+            background: #e0e0e0;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 10px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            word-wrap: break-word;
+            transition: all 0.3s ease;
+        }
+
+        .result.show {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .result.error {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+        }
+
+        .history {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .history h3 {
+            font-size: 14px;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .history-item {
+            padding: 8px;
+            background: white;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .history::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .history::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .history::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        @media (max-width: 480px) {
+            .calculator {
+                padding: 20px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h2>🧮 Kalkulator David</h2>
+        
+        <div class="input-group">
+            <label for="num1">Angka Pertama</label>
+            <input type="number" id="num1" placeholder="Masukkan angka pertama" step="any">
+        </div>
+
+        <div class="input-group">
+            <label for="operator">Operasi</label>
+            <select id="operator">
+                <option value="+">➕ Penjumlahan (+)</option>
+                <option value="-">➖ Pengurangan (-)</option>
+                <option value="*">✖️ Perkalian (*)</option>
+                <option value="/">➗ Pembagian (/)</option>
+                <option value="%">📊 Modulus (%)</option>
+                <option value="**">🔺 Pangkat (**)</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label for="num2">Angka Kedua</label>
+            <input type="number" id="num2" placeholder="Masukkan angka kedua" step="any">
+        </div>
+
+        <div class="button-group">
+            <button class="btn-calculate" onclick="calculate()">Hitung</button>
+            <button class="btn-clear" onclick="clearAll()">Reset</button>
+        </div>
+
+        <div id="result" class="result">Hasil akan muncul di sini</div>
+
+        <div class="history" id="history" style="display: none;">
+            <h3>📜 Riwayat Perhitungan</h3>
+            <div id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        let history = [];
+
+        // Allow Enter key to calculate
+        document.getElementById('num1').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') calculate();
+        });
+        document.getElementById('num2').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') calculate();
+        });
+
+        function calculate() {
+            let num1 = parseFloat(document.getElementById('num1').value);
+            let num2 = parseFloat(document.getElementById('num2').value);
+            let operator = document.getElementById('operator').value;
+            let resultDiv = document.getElementById('result');
+            
+            // Validation
+            if (isNaN(num1) || isNaN(num2)) {
+                showResult("⚠️ Mohon masukkan kedua angka dengan benar!", true);
+                return;
+            }
+
+            let result = 0;
+            let operatorSymbol = operator;
+
+            switch(operator) {
+                case '+': 
+                    result = num1 + num2; 
+                    break;
+                case '-': 
+                    result = num1 - num2; 
+                    break;
+                case '*': 
+                    result = num1 * num2; 
+                    break;
+                case '/': 
+                    if(num2 === 0) {
+                        showResult("❌ Error: Pembagian dengan nol tidak diperbolehkan!", true);
+                        return;
+                    }
+                    result = num1 / num2;
+                    break;
+                case '%':
+                    result = num1 % num2;
+                    break;
+                case '**':
+                    result = Math.pow(num1, num2);
+                    operatorSymbol = '^';
+                    break;
+            }
+
+            // Format result
+            result = Math.round(result * 100000000) / 100000000;
+            
+            // Show result
+            showResult(`✅ Hasil: ${num1} ${operatorSymbol} ${num2} = ${result}`, false);
+            
+            // Add to history
+            addToHistory(`${num1} ${operatorSymbol} ${num2} = ${result}`);
+        }
+
+        function showResult(message, isError) {
+            let resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = message;
+            resultDiv.classList.remove('show', 'error');
+            
+            if (isError) {
+                resultDiv.classList.add('error');
+            }
+            
+            setTimeout(() => {
+                resultDiv.classList.add('show');
+            }, 10);
+        }
+
+        function clearAll() {
+            document.getElementById('num1').value = '';
+            document.getElementById('num2').value = '';
+            document.getElementById('operator').selectedIndex = 0;
+            document.getElementById('result').innerHTML = 'Hasil akan muncul di sini';
+            document.getElementById('result').classList.remove('error', 'show');
+            document.getElementById('num1').focus();
+        }
+
+        function addToHistory(calculation) {
+            history.unshift(calculation);
+            if (history.length > 10) history.pop(); // Keep only last 10
+            
+            let historyDiv = document.getElementById('history');
+            let historyList = document.getElementById('historyList');
+            
+            historyList.innerHTML = history.map(item => 
+                `<div class="history-item">${item}</div>`
+            ).join('');
+            
+            historyDiv.style.display = 'block';
+        }
+
+        // Focus on first input on load
+        window.onload = function() {
+            document.getElementById('num1').focus();
+        };
+    </script>
+</body>
+</html>
